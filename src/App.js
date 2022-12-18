@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './App.css';
+import './App.scss';
 import {
   collection,
   doc,
@@ -13,8 +13,10 @@ import db from './components/Firebase';
 function App() {
   const [val, setVal] = useState();
   const [id, setID] = useState();
+  const [decr, setDecr] = useState(1);
+  const [incr, setIncr] = useState(1);
 
-  function apiCall(value) {
+  async function apiCall(value) {
     const docRef = doc(db, 'counters', id);
     updateDoc(docRef, { count: value });
   }
@@ -42,23 +44,61 @@ function App() {
     apiCall(val + num);
   };
 
+  const changeDecrHandler = (e) => {
+    setDecr(e.target.value);
+  };
+
+  const changeIncrHandler = (e) => {
+    setIncr(e.target.value);
+  };
+
+  const reloadHandler = () => {
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  };
+
   return (
     <div className="container">
       <h2>Counter</h2>
       <div className="wrapper">
-        <button type="button" className="decBtn" onClick={() => clickHandler(-1)}>
-          - Decrement
-        </button>
+        <div className="f-col">
+          <button
+            type="button"
+            className="decBtn"
+            onClick={() => clickHandler(-decr)}
+          >
+            - Decrement
+          </button>
+          <span>By:</span>
+          <input
+            type="number"
+            value={decr}
+            onChange={(e) => changeDecrHandler(e)}
+          />
+        </div>
         {val ? <h1>{val}</h1> : <h1>0</h1>}
-        <button type="button" className="incBtn" onClick={() => clickHandler(1)}>
-          + Increment
-        </button>
+        <div className="f-col">
+          <button
+            type="button"
+            className="incBtn"
+            onClick={() => clickHandler(+incr)}
+          >
+            + Increment
+          </button>
+          <span>By:</span>
+          <input
+            type="number"
+            value={incr}
+            onChange={(e) => changeIncrHandler(e)}
+          />
+        </div>
       </div>
       <div className="wrapper">
         <button type="button" onClick={() => resHandler()}>
           RESET
         </button>
-        <button type="button" onClick={() => window.location.reload()}>
+        <button type="button" onClick={() => reloadHandler()}>
           RELOAD
         </button>
       </div>
